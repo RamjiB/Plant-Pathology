@@ -50,7 +50,7 @@ def aug_multiple_class(images):
     return x, y
 
 
-def model(train = False):
+def model(train=False):
     bm = keras.applications.densenet.DenseNet121(input_shape=(96, 96, 3), include_top=False, weights='imagenet')
 
     for layer in bm.layers:
