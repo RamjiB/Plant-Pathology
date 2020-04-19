@@ -1,27 +1,36 @@
 import pandas as pd
 import numpy as np
 import cv2
-import keras
-import os
-from progress.bar import Bar
+# import keras
+import utils
 
 train_df = pd.read_csv('train.csv')
 print('Number of train images: ' + str(train_df.shape[0]))
 
 # read all the train images and store it in a variable x
-x = []
 images = train_df['image_id'].values
-bar = Bar('Reading train images', max=len(images))
-for image_name in images:
-    # read image using cv2 and convert it to RGB
-    img = cv2.cvtColor(cv2.imread(os.path.join('images/', image_name+'.jpg')), cv2.COLOR_BGR2RGB)
-    # resize the images to size (96,96,3)
-    img = cv2.resize(img, (96, 96))
-    # append it to x
-    x.append(img)
-    bar.next()
-bar.finish()
+x = utils.read_images(images)
 
-# change list to array
-x = np.array(x)
-print('shape of x: ', x.shape)
+# labels for train images
+y = np.array(train_df.iloc[:, 1:])
+print(y.shape)
+
+# from EDA it was clear that multiple_disease class is really lower than other classes, So augmenting images by
+# flipping will help the model to have less biased
+
+train_df['class'] = train_df.iloc[:, 1:].idxmax(axis=1)
+aug_image, aug_label = utils.aug_multiple_class(train_df[train_df['class'] == 'multiple_diseases']['image_id'])
+
+print('--------augmented image-------------')
+print(aug_image.shape, aug_label.shape)
+
+# appending augmented and real images
+x = np.vstack((x, aug_image))
+y = np.vstack((y, aug_label))
+
+print(x.shape, y.shape)
+
+del aug_image, aug_label
+
+
+
