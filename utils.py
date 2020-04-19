@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import os
 from progress.bar import Bar
+import keras
 
 
 def read_images(images):
@@ -47,3 +48,22 @@ def aug_multiple_class(images):
     x = np.array(x)
     y = np.array(y)
     return x, y
+
+
+def model(train = False):
+    bm = keras.applications.densenet.DenseNet121(input_shape=(96, 96, 3), include_top=False, weights='imagenet')
+
+    for layer in bm.layers:
+        layer.trainable = train
+
+    x = bm.output
+    x = keras.layers.GlobalAveragePooling2D()(x)
+    x = keras.layers.Dense(512, activation='relu')(x)
+    x = keras.layers.Dense(128, activation='relu')(x)
+    x = keras.layers.Dense(4, activation='softmax')(x)
+
+    m = keras.models.Model(inputs=bm.input, outputs=x)
+    m.compile(keras.optimizers.Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+    m.summary()
+
+    return m
