@@ -44,8 +44,8 @@ del aug_image, aug_label, x, y
 
 print('--------------training started -----------------')
 
-model = utils.model()
-mcp = ModelCheckpoint('model.h5', monitor='val_accuracy', save_best_only= True)
+model = utils.model(train=True)
+mcp = ModelCheckpoint('dense121.h5', monitor='val_accuracy', save_best_only= True)
 history = model.fit(x_train, y_train, epochs=args.epochs, batch_size=args.batch_size, validation_data=(x_valid, y_valid), callbacks=[mcp])
 
 # plot the train and validation  accuracy
