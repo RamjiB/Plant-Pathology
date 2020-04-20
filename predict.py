@@ -29,4 +29,4 @@ test_df['scab'] = predictions[:, 3]
 
 print(test_df.shape)
 
-test_df.to_csv('densenet121_kernel_initial.csv', index=False)
+test_df.to_csv('densenet121_kernel_initial_d0.csv', index=False)
