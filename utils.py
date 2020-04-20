@@ -59,6 +59,7 @@ def model(train=False):
     x = bm.output
     x = keras.layers.GlobalAveragePooling2D()(x)
     x = keras.layers.Dense(512, activation='relu', kernel_initializer='he_normal')(x)
+    x = keras.layers.Dropout(0.3)
     x = keras.layers.Dense(128, activation='relu', kernel_initializer='he_normal')(x)
     x = keras.layers.Dense(4, activation='softmax')(x)
 
