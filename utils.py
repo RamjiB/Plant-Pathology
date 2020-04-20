@@ -64,7 +64,7 @@ def model(train=False):
     x = keras.layers.Dense(4, activation='softmax')(x)
 
     m = keras.models.Model(inputs=bm.input, outputs=x)
-    m.compile(keras.optimizers.Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+    m.compile(keras.optimizers.Adam(lr=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
     m.summary()
 
     return m
