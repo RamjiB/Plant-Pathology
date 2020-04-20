@@ -9,6 +9,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Inputs for the code')
 parser.add_argument('--epochs', type=int, default=30)
 parser.add_argument('--batch_size', type=int, default=32)
+parser.add_argument('--mn', type=str, required=True)
 args = parser.parse_args()
 
 train_df = pd.read_csv('train.csv')
@@ -38,20 +39,23 @@ y = np.vstack((y, aug_label))
 print(x.shape, y.shape)
 
 # split the training data into train and valid
-x_train, x_valid, y_train, y_valid = train_test_split(x, y, random_state=22, stratify=y, shuffle=True)
+x_train, x_valid, y_train, y_valid = train_test_split(x, y, random_state=22, stratify=y, shuffle=True, test_size=0.20)
 
 del aug_image, aug_label, x, y
 
 print('--------------training started -----------------')
 
 model = utils.model(train=True)
-mcp = ModelCheckpoint('dense121.h5', monitor='val_accuracy', save_best_only= True)
-history = model.fit(x_train, y_train, epochs=args.epochs, batch_size=args.batch_size, validation_data=(x_valid, y_valid), callbacks=[mcp])
+mcp = ModelCheckpoint(args.mn, monitor='val_accuracy', save_best_only=True)
+history = model.fit(x_train, y_train, epochs=args.epochs, batch_size=args.batch_size,
+                    validation_data=(x_valid, y_valid), callbacks=[mcp])
 
 # plot the train and validation  accuracy
 plt.plot(history.history['accuracy'], label='accuracy')
 plt.plot(history.history['val_accuracy'], label='val_accuracy')
+plt.legend()
+plt.title(args.mn)
 plt.show()
-plt.savefig('accuracy plot')
+plt.savefig(args.mn.split('.')[0])
 
 
